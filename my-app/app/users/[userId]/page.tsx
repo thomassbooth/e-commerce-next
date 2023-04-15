@@ -3,6 +3,7 @@ import getUserPosts from "@/lib/getUserPosts"
 import { Suspense } from "react";
 import UserPosts  from "./components/UserPosts";
 import type { Metadata } from 'next'
+import getAllUsers from "@/lib/getAllUsers";
 
 type Params = {
     params: {
@@ -20,6 +21,10 @@ export async function generateMetadata({ params: { userId }}: Params): Promise<M
       description: `This is the page of ${user.name}`
     }
   }
+  
+
+  //every 60 seconds go refetch data on the server
+//export const revalidate = 60;
 
 export default async function UserPage({ params: { userId }}: Params) {
 
@@ -38,4 +43,13 @@ export default async function UserPage({ params: { userId }}: Params) {
       </Suspense>
     </>
   )
+}
+
+export async function generateStaticParams() {
+  const usersData: Promise<User[]> = getAllUsers()
+  const users = await usersData
+
+  return users.map(user => ({
+    userId: String(user.id) 
+  }))
 }

@@ -9,7 +9,7 @@ export default async function UserPosts({ promise }: Props) {
     <div>
         {posts.map(post => {
                 return (
-                    <article>
+                    <article key = {post.id} >
                         <h2>{post.id}</h2>
                         <p>{post.body}</p>
                         <br/>
