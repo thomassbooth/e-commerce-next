@@ -3,6 +3,6 @@ export default async function getUserPosts(userId: string) {
     { next: { revalidate: 60}})
 
 
-    if (!res.ok) throw new Error('failed to fetch user')
+    if (!res.ok) undefined
     return res.json()
 }

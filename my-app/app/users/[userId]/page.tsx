@@ -4,6 +4,8 @@ import { Suspense } from "react";
 import UserPosts  from "./components/UserPosts";
 import type { Metadata } from 'next'
 import getAllUsers from "@/lib/getAllUsers";
+import { notFound } from 'next/navigation'
+
 
 type Params = {
     params: {
@@ -15,7 +17,11 @@ export async function generateMetadata({ params: { userId }}: Params): Promise<M
   //we can call this here and down below as Nextjs will remove any reduplicated requests
     const userData: Promise<User> = getUser(userId);
     const user: User = await userData
-
+    if (!user.name) {
+      return {
+        title: 'User Not Found'
+      }
+    }
     return {
       title: user.name,
       description: `This is the page of ${user.name}`
@@ -23,7 +29,7 @@ export async function generateMetadata({ params: { userId }}: Params): Promise<M
   }
   
 
-  //every 60 seconds go refetch data on the server
+//every 60 seconds go refetch data on the server
 //export const revalidate = 60;
 
 export default async function UserPage({ params: { userId }}: Params) {
@@ -32,7 +38,10 @@ export default async function UserPage({ params: { userId }}: Params) {
   const usersPostsData: Promise<Post[]> = getUserPosts(userId);
 
   //const [user, userPosts] = await Promise.all([userData, usersPostsData]);
-  const user = await userData
+  const user = await userData;
+
+  if (!user.name) return notFound()
+
   return (
     <>
       <h2>{user.name}</h2>
